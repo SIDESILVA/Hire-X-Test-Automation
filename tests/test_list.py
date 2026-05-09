@@ -17,7 +17,7 @@ def test_create_list(driver):
 
     wait = WebDriverWait(driver, 40)
 
-    # ---------------- WAIT FOR PAGE LOAD ----------------
+    #Wait for Page load
 
     wait.until(
         EC.url_contains("/supplier/lists")
@@ -25,7 +25,7 @@ def test_create_list(driver):
 
     print("✅ SUCCESS: Navigated to List section")
 
-    # ---------------- CREATE LIST ----------------
+    #Create List
 
     list_module = ListModule(driver)
 
