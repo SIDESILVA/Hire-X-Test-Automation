@@ -20,7 +20,6 @@ class OrderModule:
     # ---------------- WAIT UI READY ----------------
     def _wait_ui_ready(self):
 
-        # wait spinner disappear
         try:
             self.wait.until(
                 EC.invisibility_of_element_located(self.page.SPINNER)
@@ -28,7 +27,6 @@ class OrderModule:
         except TimeoutException:
             pass
 
-        # wait overlay disappear
         try:
             self.wait.until(
                 EC.invisibility_of_element_located(self.page.OVERLAY)
@@ -55,9 +53,7 @@ class OrderModule:
         self._wait_ui_ready()
 
         btn = self.wait.until(
-            EC.element_to_be_clickable(
-                self.page.NEW_ORDER_BTN
-            )
+            EC.element_to_be_clickable(self.page.NEW_ORDER_BTN)
         )
 
         btn.click()
@@ -67,21 +63,16 @@ class OrderModule:
         self._wait_ui_ready()
 
         self.wait.until(
-            EC.visibility_of_element_located(
-                self.page.CREATE_TEXT
-            )
+            EC.visibility_of_element_located(self.page.CREATE_TEXT)
         )
 
     # ---------------- CUSTOMER ----------------
     def select_random_customer(self):
 
-        # VERY IMPORTANT
         self._wait_ui_ready()
 
         dropdown = self.wait.until(
-            EC.element_to_be_clickable(
-                self.page.CUSTOMER_DROPDOWN
-            )
+            EC.element_to_be_clickable(self.page.CUSTOMER_DROPDOWN)
         )
 
         self.driver.execute_script(
@@ -100,15 +91,21 @@ class OrderModule:
             )
 
         options = self.wait.until(
-            EC.presence_of_all_elements_located(
-                self.page.CUSTOMER_OPTIONS
-            )
+            EC.presence_of_all_elements_located(self.page.CUSTOMER_OPTIONS)
         )
 
-        valid_options = [
-            opt for opt in options
-            if opt.text.strip() != ""
-        ]
+        valid_options = []
+
+        for opt in options:
+            text = opt.text.strip().lower()
+
+            if text == "" or "create a new customer" in text:
+                continue
+
+            valid_options.append(opt)
+
+        if not valid_options:
+            raise Exception("No valid customers available in dropdown")
 
         random.choice(valid_options).click()
 
@@ -118,14 +115,10 @@ class OrderModule:
         self._wait_ui_ready()
 
         create_btn = self.wait.until(
-            EC.presence_of_element_located(
-                self.page.CREATE_BTN
-            )
+            EC.presence_of_element_located(self.page.CREATE_BTN)
         )
 
-        self.wait.until(
-            lambda d: create_btn.is_enabled()
-        )
+        self.wait.until(lambda d: create_btn.is_enabled())
 
         self.driver.execute_script(
             "arguments[0].scrollIntoView({block:'center'});",
@@ -136,7 +129,6 @@ class OrderModule:
 
         try:
             create_btn.click()
-
         except:
             self.driver.execute_script(
                 "arguments[0].click();",
@@ -145,18 +137,19 @@ class OrderModule:
 
         self._wait_ui_ready()
 
-    # ---------------- ADD PRODUCT ----------------
-    def add_product(self, product_name, quantity):
+    # ---------------- ADD PRODUCT (🔥 UPDATED FOR DATA FILE) ----------------
+    def add_product(self, product_data):
+
+        product_name = product_data["product"]
+        search_key = product_data["search_key"]
+        quantity = product_data["quantity"]
 
         with allure.step(f"Add Product - {product_name}"):
 
             self._wait_ui_ready()
 
-            # product input
             product_input = self.wait.until(
-                EC.element_to_be_clickable(
-                    self.page.PRODUCT_INPUT
-                )
+                EC.element_to_be_clickable(self.page.PRODUCT_INPUT)
             )
 
             self.driver.execute_script(
@@ -165,13 +158,10 @@ class OrderModule:
             )
 
             product_input.clear()
-            product_input.send_keys(product_name)
+            product_input.send_keys(search_key)
 
-            # select first option
             first_option = self.wait.until(
-                EC.element_to_be_clickable(
-                    self.page.PRODUCT_OPTIONS
-                )
+                EC.element_to_be_clickable(self.page.PRODUCT_OPTIONS)
             )
 
             self.driver.execute_script(
@@ -181,11 +171,8 @@ class OrderModule:
 
             self._wait_ui_ready()
 
-            # quantity
             qty_input = self.wait.until(
-                EC.visibility_of_element_located(
-                    self.page.QUANTITY_INPUT
-                )
+                EC.visibility_of_element_located(self.page.QUANTITY_INPUT)
             )
 
             qty_input.clear()
@@ -193,11 +180,8 @@ class OrderModule:
 
             self._wait_ui_ready()
 
-            # add button
             add_btn = self.wait.until(
-                EC.element_to_be_clickable(
-                    self.page.ADD_BUTTON
-                )
+                EC.element_to_be_clickable(self.page.ADD_BUTTON)
             )
 
             self.driver.execute_script(
@@ -209,20 +193,15 @@ class OrderModule:
 
             try:
                 add_btn.click()
-
             except:
                 self.driver.execute_script(
                     "arguments[0].click();",
                     add_btn
                 )
 
-            # wait product added
             self.wait.until(
                 EC.presence_of_element_located(
-                    (
-                        By.XPATH,
-                        f"//*[contains(text(),'{product_name}')]"
-                    )
+                    (By.XPATH, f"//*[contains(text(),'{product_name}')]")
                 )
             )
 
@@ -234,11 +213,8 @@ class OrderModule:
         self._wait_ui_ready()
 
         try:
-
             btn = self.wait.until(
-                EC.element_to_be_clickable(
-                    self.page.CLOSE_MODAL
-                )
+                EC.element_to_be_clickable(self.page.CLOSE_MODAL)
             )
 
             self.driver.execute_script(

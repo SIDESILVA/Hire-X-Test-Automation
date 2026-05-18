@@ -13,10 +13,12 @@ class AuthModule:
         self.tenant_page = TenantPage(driver)
         self.login_page = LoginPage(driver)
 
-    def login(self, url, tenant, username, password):
+    # ---------------- NORMAL LOGIN ----------------
+    def login(self, url, tenant, username, password, expect_success=True):
 
         self.driver.get(url)
 
+        self.tenant_page.wait_for_loader_to_disappear()
         self.tenant_page.set_tenant(tenant)
         self.tenant_page.click_sign_in()
 
@@ -24,4 +26,12 @@ class AuthModule:
 
         self.login_page.login(username, password)
 
-        self.wait.until(EC.url_contains("/supplier/dashboard"))
+        # ---------------- CONDITIONAL CHECK ----------------
+        if expect_success:
+            self.wait.until(EC.url_contains("/supplier/dashboard"))
+        else:
+            # small wait to allow error message / stay on page
+            try:
+                self.wait.until(EC.url_contains("/supplier/dashboard"))
+            except:
+                pass

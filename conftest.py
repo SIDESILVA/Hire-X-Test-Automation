@@ -30,15 +30,15 @@ def driver():
 # ---------------------------
 # LOGIN FIXTURE (MODULE BASED)
 # ---------------------------
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(scope="session")
 def login(driver):
 
     auth = AuthModule(driver)
 
     auth.login(
         url="https://app-hire-x-dev-multi-tenant-angular-01-bkgee7ewapa0c5es.southeastasia-01.azurewebsites.net/webshopnotfound",
-        tenant="GrandRest",
-        username="suchini@ateamsoftware.com",
+        tenant="MetroHaven",
+        username="himasha1@gmail.com",
         password="Abc12345"
     )
 

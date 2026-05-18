@@ -1,0 +1,17 @@
+PRODUCT_SEARCH_DATA = [
+    {"product": "Burger", "search_key": "bur", "quantity": 2},
+    {"product": "Chicken Biryani", "search_key": "chi", "quantity": 2},
+    {"product": "Chocolate Brownie", "search_key": "cho", "quantity": 2},
+    {"product": "Hoppers (Appa)", "search_key": "hop", "quantity": 2},
+    {"product": "Ice Cream Sundae", "search_key": "ice", "quantity": 2},
+    {"product": "Iced Coffee", "search_key": "ice", "quantity": 2},
+    {"product": "Kottu Roti", "search_key": "kot", "quantity": 2},
+    {"product": "Lemon Mojito", "search_key": "lem", "quantity": 2},
+    {"product": "Mango Smoothie", "search_key": "man", "quantity": 2},
+    {"product": "Pasta Carbonara", "search_key": "pas", "quantity": 2},
+    {"product": "Pizza Margherita", "search_key": "piz", "quantity": 2},
+    {"product": "Potato Chips", "search_key": "pot", "quantity": 2},
+    {"product": "Rice and Curry", "search_key": "ric", "quantity": 2},
+    {"product": "String Hoppers", "search_key": "str", "quantity": 2},
+    {"product": "Sushi", "search_key": "sus", "quantity": 2},
+]
