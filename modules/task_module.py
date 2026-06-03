@@ -8,6 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 
 from pages.task_page import TaskPage
+from utils.delay_helper import slow_down
 
 
 ROTATION_FILE = "task_type_index.json"
@@ -26,15 +27,12 @@ class TaskModule:
 
         try:
             self.wait.until(
-                EC.invisibility_of_element_located(
-                    self.page.SPINNER
-                )
+                EC.invisibility_of_element_located(self.page.SPINNER)
             )
-
         except TimeoutException:
             pass
 
-        time.sleep(1)
+        slow_down()
 
     # ---------------- OPEN TASK PAGE ----------------
     def open_tasks(self, url):
@@ -53,12 +51,12 @@ class TaskModule:
         self._wait_ui_ready()
 
         btn = self.wait.until(
-            EC.element_to_be_clickable(
-                self.page.NEW_BUTTON
-            )
+            EC.element_to_be_clickable(self.page.NEW_BUTTON)
         )
 
         btn.click()
+
+        slow_down()
 
     # ---------------- SELECT TASK TYPE ----------------
     def select_rotating_task_type(self):
@@ -66,17 +64,15 @@ class TaskModule:
         with allure.step("Select rotating task type"):
 
             dropdown = self.wait.until(
-                EC.element_to_be_clickable(
-                    self.page.TASK_TYPE_DROPDOWN
-                )
+                EC.element_to_be_clickable(self.page.TASK_TYPE_DROPDOWN)
             )
 
             dropdown.click()
 
+            slow_down()
+
             options = self.wait.until(
-                EC.presence_of_all_elements_located(
-                    self.page.TASK_TYPE_OPTIONS
-                )
+                EC.presence_of_all_elements_located(self.page.TASK_TYPE_OPTIONS)
             )
 
             task_types = [
@@ -104,6 +100,7 @@ class TaskModule:
 
                 if opt.text.strip() == selected_type:
                     opt.click()
+                    slow_down()
                     break
 
             print(f"✅ Selected Task Type: {selected_type}")
@@ -114,17 +111,15 @@ class TaskModule:
         with allure.step("Select rotating user"):
 
             dropdown = self.wait.until(
-                EC.element_to_be_clickable(
-                    self.page.USER_DROPDOWN
-                )
+                EC.element_to_be_clickable(self.page.USER_DROPDOWN)
             )
 
             dropdown.click()
 
+            slow_down()
+
             options = self.wait.until(
-                EC.presence_of_all_elements_located(
-                    self.page.USER_OPTIONS
-                )
+                EC.presence_of_all_elements_located(self.page.USER_OPTIONS)
             )
 
             users = [
@@ -141,6 +136,7 @@ class TaskModule:
 
                 if opt.text.strip() == selected_user:
                     opt.click()
+                    slow_down()
                     break
 
             print(f"✅ Selected User: {selected_user}")
@@ -151,11 +147,11 @@ class TaskModule:
         self._wait_ui_ready()
 
         btn = self.wait.until(
-            EC.element_to_be_clickable(
-                self.page.CREATE_BUTTON
-            )
+            EC.element_to_be_clickable(self.page.CREATE_BUTTON)
         )
 
         btn.click()
+
+        slow_down()
 
         self._wait_ui_ready()

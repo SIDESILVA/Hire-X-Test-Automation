@@ -8,6 +8,7 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
 
 from pages.order_page import OrderPage
+from utils.delay_helper import slow_down
 
 
 class OrderModule:
@@ -34,7 +35,7 @@ class OrderModule:
         except TimeoutException:
             pass
 
-        time.sleep(1)
+        slow_down()
 
     # ---------------- OPEN ----------------
     def open_orders(self, url):
@@ -57,6 +58,7 @@ class OrderModule:
         )
 
         btn.click()
+        slow_down()
 
     def verify_create_form(self):
 
@@ -80,7 +82,7 @@ class OrderModule:
             dropdown
         )
 
-        time.sleep(1)
+        slow_down()
 
         try:
             dropdown.click()
@@ -90,24 +92,23 @@ class OrderModule:
                 dropdown
             )
 
+        slow_down()
+
         options = self.wait.until(
             EC.presence_of_all_elements_located(self.page.CUSTOMER_OPTIONS)
         )
 
-        valid_options = []
-
-        for opt in options:
-            text = opt.text.strip().lower()
-
-            if text == "" or "create a new customer" in text:
-                continue
-
-            valid_options.append(opt)
+        valid_options = [
+            opt for opt in options
+            if opt.text.strip()
+            and "create a new customer" not in opt.text.lower()
+        ]
 
         if not valid_options:
             raise Exception("No valid customers available in dropdown")
 
         random.choice(valid_options).click()
+        slow_down()
 
     # ---------------- CREATE ORDER ----------------
     def click_create(self):
@@ -125,7 +126,7 @@ class OrderModule:
             create_btn
         )
 
-        time.sleep(1)
+        slow_down()
 
         try:
             create_btn.click()
@@ -135,9 +136,11 @@ class OrderModule:
                 create_btn
             )
 
+        slow_down()
+
         self._wait_ui_ready()
 
-    # ---------------- ADD PRODUCT (🔥 UPDATED FOR DATA FILE) ----------------
+    # ---------------- ADD PRODUCT ----------------
     def add_product(self, product_data):
 
         product_name = product_data["product"]
@@ -160,14 +163,14 @@ class OrderModule:
             product_input.clear()
             product_input.send_keys(search_key)
 
+            slow_down()
+
             first_option = self.wait.until(
                 EC.element_to_be_clickable(self.page.PRODUCT_OPTIONS)
             )
 
-            self.driver.execute_script(
-                "arguments[0].click();",
-                first_option
-            )
+            first_option.click()
+            slow_down()
 
             self._wait_ui_ready()
 
@@ -178,7 +181,7 @@ class OrderModule:
             qty_input.clear()
             qty_input.send_keys(str(quantity))
 
-            self._wait_ui_ready()
+            slow_down()
 
             add_btn = self.wait.until(
                 EC.element_to_be_clickable(self.page.ADD_BUTTON)
@@ -189,7 +192,7 @@ class OrderModule:
                 add_btn
             )
 
-            time.sleep(1)
+            slow_down()
 
             try:
                 add_btn.click()
@@ -199,11 +202,7 @@ class OrderModule:
                     add_btn
                 )
 
-            self.wait.until(
-                EC.presence_of_element_located(
-                    (By.XPATH, f"//*[contains(text(),'{product_name}')]")
-                )
-            )
+            slow_down()
 
             self._wait_ui_ready()
 
@@ -221,6 +220,8 @@ class OrderModule:
                 "arguments[0].click();",
                 btn
             )
+
+            slow_down()
 
         except:
             pass

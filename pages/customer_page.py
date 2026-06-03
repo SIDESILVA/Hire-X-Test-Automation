@@ -15,7 +15,7 @@ class CustomerPage:
         "//button[text()='Create']"
     )
 
-    # ---------------- INPUTS ----------------
+    # ---------------- FORM FIELDS ----------------
 
     FIRST_NAME = (
         By.NAME,
@@ -55,4 +55,11 @@ class CustomerPage:
     POSTCODE = (
         By.CSS_SELECTOR,
         "input[autocomplete='postal-code']"
+    )
+
+    # ---------------- CUSTOMER DETAILS PAGE ----------------
+
+    CUSTOMER_DETAILS_CONTAINER = (
+        By.XPATH,
+        "//div[contains(@class,'col-12')]"
     )

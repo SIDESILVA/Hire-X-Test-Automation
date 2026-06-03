@@ -8,6 +8,12 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 from modules.auth_module import AuthModule
+from dotenv import load_dotenv
+
+from modules.auth_module import AuthModule
+
+# Load environment variables
+load_dotenv()
 
 
 # ---------------------------
@@ -67,3 +73,5 @@ def pytest_runtest_makereport(item, call):
                 name="Failure Screenshot",
                 attachment_type=allure.attachment_type.PNG
             )
+
+    

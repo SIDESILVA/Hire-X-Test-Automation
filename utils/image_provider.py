@@ -1,44 +1,36 @@
 import os
-import requests
-import tempfile
-from data.image_data import IMAGES
-
+import random
 
 class ImageProvider:
 
     def __init__(self):
-        self.index_file = os.path.join(tempfile.gettempdir(), "image_rotation_index.txt")
 
-    def _get_index(self):
-        if os.path.exists(self.index_file):
-            with open(self.index_file, "r") as f:
-                return int(f.read().strip())
-        return 0
+        base_dir = os.path.join(
+            os.path.dirname(os.path.dirname(__file__)),
+            "data",
+            "images"
+        )
 
-    def _save_index(self, index):
-        with open(self.index_file, "w") as f:
-            f.write(str(index))
+        self.base_dir = base_dir
+
+        # ✅ LOAD ALL IMAGES DYNAMICALLY (img1 → img15 etc.)
+        self.images = [
+            os.path.join(self.base_dir, f)
+            for f in os.listdir(self.base_dir)
+            if f.lower().endswith((".png", ".jpg", ".jpeg"))
+        ]
+
+        if not self.images:
+            raise Exception("❌ No images found in data/images folder")
+
+        # optional: shuffle once at start
+        random.shuffle(self.images)
 
     def get_next_image_file(self):
 
-        index = self._get_index()
-        url = IMAGES[index % len(IMAGES)]
+        image_path = random.choice(self.images)
 
-        next_index = index + 1
-        self._save_index(next_index)
+        if not os.path.exists(image_path):
+            raise FileNotFoundError(f"Image not found: {image_path}")
 
-        try:
-            response = requests.get(url, timeout=10)
-            response.raise_for_status()
-        except Exception as e:
-            raise Exception(f"Image download failed: {url}") from e
-
-        file_path = os.path.join(
-            tempfile.gettempdir(),
-            f"product_image_{next_index}.jpg"
-        )
-
-        with open(file_path, "wb") as f:
-            f.write(response.content)
-
-        return file_path
+        return image_path

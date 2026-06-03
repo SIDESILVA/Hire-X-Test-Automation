@@ -2,53 +2,46 @@ import random
 import time
 import allure
 
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support.ui import Select
+from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 
 from pages.customer_page import CustomerPage
-from utils.screenshot import take_screenshot
+from utils.delay_helper import slow_down
 
 
 class CustomerModule:
 
     def __init__(self, driver):
-
         self.driver = driver
-        self.wait = WebDriverWait(driver, 40)
+        self.wait = WebDriverWait(driver, 60)
         self.page = CustomerPage()
+        self.typing_speed = 0.3
 
     # ---------------- RANDOM DATA ----------------
 
     def generate_name(self):
-
         first_names = [
-            "John", "Clara", "David", "Emma",
-            "Michael", "Sophia", "Daniel", "Olivia"
+            "John", "Clara", "David",
+            "Emma", "Michael", "Sophia",
+            "Daniel", "Olivia"
         ]
 
         last_names = [
-            "Smith", "Brown", "Taylor", "Wilson",
-            "Lee", "Walker", "Hall", "Allen"
+            "Smith", "Brown", "Taylor",
+            "Wilson", "Lee", "Walker",
+            "Hall", "Allen"
         ]
 
-        first = random.choice(first_names)
-        last = random.choice(last_names)
-
-        return f"test{first}", last
+        return f"test{random.choice(first_names)}", random.choice(last_names)
 
     def random_phone(self):
-
-        return "07" + ''.join(
-            random.choices("0123456789", k=8)
-        )
+        return "07" + ''.join(random.choices("0123456789", k=8))
 
     def random_email(self):
-
         return f"testuser{int(time.time())}@test.com"
 
     def random_address(self):
-
         streets = [
             "Main Road",
             "High Street",
@@ -56,28 +49,21 @@ class CustomerModule:
             "Station Road"
         ]
 
-        return (
-            f"No.{random.randint(1,200)}/A, "
-            f"{random.choice(streets)}"
-        )
+        return f"No.{random.randint(1,200)}/A, {random.choice(streets)}"
 
     def random_suburb(self):
-
-        suburbs = [
+        return random.choice([
             "Colombo",
             "Kaduwela",
             "Malabe",
             "Nugegoda",
             "Dehiwala"
-        ]
-
-        return random.choice(suburbs)
+        ])
 
     def random_postcode(self):
-
         return str(random.randint(10000, 99999))
 
-    # ---------------- COMMON METHODS ----------------
+    # ---------------- COMMON ----------------
 
     def enter_text(self, locator, value):
 
@@ -90,10 +76,12 @@ class CustomerModule:
             field
         )
 
-        time.sleep(0.5)
+        time.sleep(self.typing_speed)
 
         field.clear()
         field.send_keys(value)
+
+        time.sleep(self.typing_speed)
 
     def click(self, locator):
 
@@ -106,14 +94,16 @@ class CustomerModule:
             element
         )
 
-        time.sleep(0.5)
+        slow_down()
 
         self.driver.execute_script(
             "arguments[0].click();",
             element
         )
 
-    # ---------------- RANDOM STATE SELECTION ----------------
+        slow_down()
+
+    # ---------------- STATE ----------------
 
     def select_random_state(self):
 
@@ -123,131 +113,62 @@ class CustomerModule:
             )
         )
 
-        self.driver.execute_script(
-            "arguments[0].scrollIntoView({block:'center'});",
-            dropdown
-        )
-
-        time.sleep(1)
-
         select = Select(dropdown)
 
-        valid_options = []
+        valid_options = [
+            opt.get_attribute("value")
+            for opt in select.options
+            if opt.get_attribute("value")
+            and "select" not in opt.text.lower()
+        ]
 
-        for option in select.options:
-
-            value = option.get_attribute("value")
-
-            text = option.text.strip()
-
-            if value and text.lower() != "select":
-
-                valid_options.append(value)
-
-        random_state = random.choice(valid_options)
-
-        select.select_by_value(random_state)
-
-        print(f"✅ Random State Selected → {random_state}")
-
-        time.sleep(1)
+        select.select_by_value(
+            random.choice(valid_options)
+        )
 
     # ---------------- CREATE CUSTOMER ----------------
 
     def create_customer(self):
 
-        # ---------------- CLICK NEW ----------------
-
-        with allure.step("Click New Customer Button"):
-
+        with allure.step("Open New Customer Form"):
             self.click(self.page.NEW_BUTTON)
 
-            take_screenshot(
-                self.driver,
-                "new_customer_clicked"
-            )
-
-        # ---------------- GENERATE DATA ----------------
-
-        first_name, last_name = self.generate_name()
-
+        first, last = self.generate_name()
         email = self.random_email()
-
         phone = self.random_phone()
 
-        address = self.random_address()
+        with allure.step("Fill Customer Form"):
 
-        suburb = self.random_suburb()
-
-        postcode = self.random_postcode()
-
-        print(
-            f"Generated Customer → "
-            f"{first_name} {last_name}"
-        )
-
-        # ---------------- ENTER DETAILS ----------------
-
-        with allure.step("Enter Customer Details"):
-
-            self.enter_text(
-                self.page.FIRST_NAME,
-                first_name
-            )
-
-            self.enter_text(
-                self.page.LAST_NAME,
-                last_name
-            )
-
-            self.enter_text(
-                self.page.EMAIL,
-                email
-            )
-
-            self.enter_text(
-                self.page.PHONE,
-                phone
-            )
+            self.enter_text(self.page.FIRST_NAME, first)
+            self.enter_text(self.page.LAST_NAME, last)
+            self.enter_text(self.page.EMAIL, email)
+            self.enter_text(self.page.PHONE, phone)
 
             self.enter_text(
                 self.page.ADDRESS,
-                address
+                self.random_address()
             )
 
             self.enter_text(
                 self.page.SUBURB,
-                suburb
+                self.random_suburb()
             )
 
             self.enter_text(
                 self.page.POSTCODE,
-                postcode
+                self.random_postcode()
             )
 
-            take_screenshot(
-                self.driver,
-                "customer_details_entered"
-            )
-
-        # ---------------- SELECT RANDOM STATE ----------------
-
-        with allure.step("Select Random State"):
-
+        with allure.step("Select State"):
             self.select_random_state()
 
-            take_screenshot(
-                self.driver,
-                "state_selected"
-            )
-
-        # ---------------- WAIT BEFORE CREATE ----------------
-
-        time.sleep(2)
-
-        # ---------------- CREATE CUSTOMER ----------------
+        # ==================================================
+        # CREATE BUTTON + WAIT FOR DETAILS PAGE
+        # ==================================================
 
         with allure.step("Create Customer"):
+
+            old_url = self.driver.current_url
 
             create_btn = self.wait.until(
                 EC.element_to_be_clickable(
@@ -255,21 +176,51 @@ class CustomerModule:
                 )
             )
 
+            # scroll
             self.driver.execute_script(
                 "arguments[0].scrollIntoView({block:'center'});",
                 create_btn
             )
 
-            time.sleep(1)
+            slow_down(1)
 
+            # click create
             self.driver.execute_script(
                 "arguments[0].click();",
                 create_btn
             )
 
-            take_screenshot(
-                self.driver,
-                "customer_created"
+            print("✅ Create button clicked")
+
+            # WAIT URL CHANGE
+            self.wait.until(
+                lambda d: d.current_url != old_url
             )
 
-            print("✅ SUCCESS: Customer created")
+            print("✅ URL changed")
+
+            # WAIT CUSTOMER DETAILS URL
+            self.wait.until(
+                EC.url_contains("/customers/")
+            )
+
+            print("✅ Navigated to customer details page")
+
+            # WAIT PAGE LOAD
+            self.wait.until(
+                EC.presence_of_element_located(
+                    self.page.CUSTOMER_DETAILS_CONTAINER
+                )
+            )
+
+            print("✅ Customer details page fully loaded")
+
+            # ==================================================
+            # KEEP BROWSER OPEN FOR UI DEMO
+            # ==================================================
+
+            print("👀 Keeping browser open for verification...")
+
+            time.sleep(10)
+
+            print("✅ Customer creation flow completed")
