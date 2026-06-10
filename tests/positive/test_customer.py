@@ -9,7 +9,7 @@ from pages.customer_page import CustomerPage
 
 
 @pytest.mark.smoke
-@allure.title("Create Customer")
+@allure.title("Customer Full Automation")
 def test_create_customer(driver, login):
 
     driver.get(
@@ -19,9 +19,7 @@ def test_create_customer(driver, login):
     wait = WebDriverWait(driver, 60)
 
     wait.until(
-        EC.visibility_of_element_located(
-            CustomerPage.NEW_BUTTON
-        )
+        EC.visibility_of_element_located(CustomerPage.NEW_BUTTON)
     )
 
     customer = CustomerModule(driver)
