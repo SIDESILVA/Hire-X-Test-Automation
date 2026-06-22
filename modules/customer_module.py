@@ -348,9 +348,43 @@ class CustomerModule:
     def delete_phone_number(self):
 
         with allure.step("Delete Phone Number"):
-            self.click(self.page.PHONE_NUMBER_DELETE_BUTTON)
 
-            print("✅ Phone number deleted successfully")
+            # 1. Click delete button
+            delete_btn = self.wait.until(
+                EC.element_to_be_clickable(self.page.PHONE_NUMBER_DELETE_BUTTON)
+            )
+
+            self.driver.execute_script(
+                "arguments[0].scrollIntoView({block:'center'});",
+                delete_btn
+            )
+
+            self.driver.execute_script("arguments[0].click();", delete_btn)
+
+            print("✅ Phone number delete clicked")
+
+        with allure.step("Confirm Phone Delete Popup (YES)"):
+
+            # 2. WAIT for popup
+            yes_btn = self.wait.until(
+                EC.element_to_be_clickable(
+                    (By.XPATH, "//div[contains(@class,'modal-content')]//button[normalize-space()='Yes']")
+                )
+            )
+
+            self.driver.execute_script("arguments[0].click();", yes_btn)
+
+            print("✅ Phone delete confirmed (YES clicked)")
+
+        with allure.step("Wait popup closed"):
+
+            self.wait.until(
+                EC.invisibility_of_element_located(
+                    (By.XPATH, "//div[contains(@class,'modal-content')]")
+                )
+            )
+
+            print("✅ Phone delete modal closed")
 
     # ==================================================
     # CLICK NEW TASK BUTTON

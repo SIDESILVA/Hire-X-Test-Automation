@@ -26,9 +26,16 @@ def test_create_order(driver, login):
         order.select_random_customer()
         order.click_create()
 
+    # Set End Date once
+    with allure.step("Set End Date (+2 Days)"):
+        order.set_end_date_plus_two_days()
+
+    # Link Order if available
+    with allure.step("Link Order If Available"):
+        order.link_order_if_available()
+
+    # Add Product once
     with allure.step("Add Product (Random Data)"):
         order.add_product(product)
 
     take_screenshot(driver, "order_completed")
-
-    

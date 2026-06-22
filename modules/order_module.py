@@ -9,6 +9,8 @@ from selenium.common.exceptions import TimeoutException
 
 from pages.order_page import OrderPage
 from utils.delay_helper import slow_down
+from datetime import datetime, timedelta
+from selenium.webdriver.support.ui import Select
 
 
 class OrderModule:
@@ -139,6 +141,48 @@ class OrderModule:
         slow_down()
 
         self._wait_ui_ready()
+    
+        # ---------------- SET END DATE ----------------
+    def set_end_date_plus_two_days(self):
+
+        self._wait_ui_ready()
+
+        end_date = (datetime.now() + timedelta(days=2)).strftime("%d/%m/%Y")
+        # If your application expects another format such as "%m/%d/%Y"
+        # or "%d-%m-%Y", adjust the format string accordingly.
+
+        end_date_input = self.wait.until(
+            EC.element_to_be_clickable(self.page.END_DATE_INPUT)
+        )
+
+        self.driver.execute_script(
+            "arguments[0].scrollIntoView({block:'center'});",
+            end_date_input
+        )
+
+        slow_down()
+
+        try:
+            end_date_input.click()
+            end_date_input.clear()
+        except Exception:
+            self.driver.execute_script(
+                "arguments[0].value='';",
+                end_date_input
+            )
+
+        end_date_input.send_keys(end_date)
+
+        # Trigger Angular change detection
+        self.driver.execute_script(
+            """
+            arguments[0].dispatchEvent(new Event('input', { bubbles: true }));
+            arguments[0].dispatchEvent(new Event('change', { bubbles: true }));
+            """,
+            end_date_input
+        )
+
+        slow_down()
 
     # ---------------- ADD PRODUCT ----------------
     def add_product(self, product_data):
@@ -205,6 +249,82 @@ class OrderModule:
             slow_down()
 
             self._wait_ui_ready()
+
+    # ---------------- LINK ORDER (OPTIONAL) ----------------
+    def link_order_if_available(self):
+
+        self._wait_ui_ready()
+
+        try:
+            dropdown_element = self.driver.find_element(
+                *self.page.LINK_ORDER_DROPDOWN
+            )
+        except Exception:
+            print("Link Order section not available. Continuing...")
+            return
+
+        try:
+            self.driver.execute_script(
+                "arguments[0].scrollIntoView({block:'center'});",
+                dropdown_element
+            )
+
+            slow_down()
+
+            select = Select(dropdown_element)
+
+            valid_options = [
+                option
+                for option in select.options
+                if option.get_attribute("value")
+                and option.get_attribute("value") != "0: null"
+                and option.text.strip()
+                and option.text.strip().lower() != "select order to link"
+            ]
+
+            if not valid_options:
+                print("No linkable orders found. Continuing...")
+                return
+
+            chosen = random.choice(valid_options)
+            select.select_by_visible_text(chosen.text)
+
+            slow_down()
+
+            link_button = self.wait.until(
+                EC.element_to_be_clickable(
+                    self.page.LINK_ORDER_BUTTON
+                )
+            )
+
+            self.driver.execute_script(
+                "arguments[0].click();",
+                link_button
+            )
+
+            slow_down()
+
+            try:
+                yes_button = self.wait.until(
+                    EC.element_to_be_clickable(
+                        self.page.LINK_ORDER_YES_BUTTON
+                    )
+                )
+
+                self.driver.execute_script(
+                    "arguments[0].click();",
+                    yes_button
+                )
+
+                slow_down()
+
+                self._wait_ui_ready()
+
+            except Exception:
+                print("Confirmation popup did not appear.")
+
+        except Exception as e:
+            print(f"Skipping Link Order step: {e}")
 
     # ---------------- CLOSE MODAL ----------------
     def close_modal(self):

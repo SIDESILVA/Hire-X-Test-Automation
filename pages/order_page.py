@@ -30,6 +30,12 @@ class OrderPage:
         "//div[contains(@class,'ng-option')]"
     )
 
+    # Hire Details
+    END_DATE_INPUT = (
+        By.NAME,
+        "endDate"
+    )
+
     # Product
     PRODUCT_INPUT = (
         By.NAME,
@@ -66,4 +72,25 @@ class OrderPage:
     OVERLAY = (
         By.XPATH,
         "//div[contains(@class,'modal-backdrop')]"
+    )
+
+        # Link Order
+    LINK_ORDER_DROPDOWN = (
+        By.NAME,
+        "linkcustomerOrder"
+    )
+
+    LINK_ORDER_OPTIONS = (
+        By.XPATH,
+        "//select[@name='linkcustomerOrder']/option"
+    )
+
+    LINK_ORDER_BUTTON = (
+        By.XPATH,
+        "//button[normalize-space()='Link Order']"
+    )
+
+    LINK_ORDER_YES_BUTTON = (
+        By.XPATH,
+        "//div[contains(@class,'modal-content')]//button[normalize-space()='Yes']"
     )
