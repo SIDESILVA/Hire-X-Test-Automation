@@ -25,7 +25,7 @@ class CustomerPage:
     )
 
     # ==================================================
-    # TASK SAVE BUTTON (FIXED + STABLE)
+    # TASK SAVE BUTTON 
     # ==================================================
 
     TASK_SAVE_BUTTON = (

@@ -245,7 +245,7 @@ class ProductModule:
             # 🆕 OPEN STOCK ITEM FORM (ADDED)
             self.create_stock_item()
 
-    # ---------------- STOCK ITEM FLOW (NEW - ADDED) ----------------
+    # ---------------- STOCK ITEM FLOW ----------------
     def create_stock_item(self):
 
         with allure.step("Create Stock Item"):
@@ -384,9 +384,9 @@ class ProductModule:
 
             if is_public:
                 self.driver.execute_script("arguments[0].click();", toggle)
-                print("🔁 Public → Private")
+                print("Public → Private")
             else:
-                print("ℹ️ Already Private")
+                print("Already Private")
 
             slow_down(1)
 
@@ -414,9 +414,9 @@ class ProductModule:
 
             if not is_public_again:
                 self.driver.execute_script("arguments[0].click();", toggle_again)
-                print("🔁 Private → Public")
+                print(" Private → Public")
             else:
-                print("ℹ️ Already Public")
+                print("Already Public")
 
             slow_down(1)
 

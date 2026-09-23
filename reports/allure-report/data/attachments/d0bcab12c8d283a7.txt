@@ -1,0 +1,23 @@
+Message: invalid session id: session deleted as the browser has closed the connection
+from disconnected: not connected to DevTools
+  (Session info: chrome=149.0.7827.200); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff73dfc3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff73dfc4000+14980]
+	chromedriver!(No symbol) [0x7ff73db0793d]
+	chromedriver!(No symbol) [0x7ff73daf2d82]
+	chromedriver!(No symbol) [0x7ff73db190cc]
+	chromedriver!(No symbol) [0x7ff73db91aa0]
+	chromedriver!(No symbol) [0x7ff73dbaec82]
+	chromedriver!(No symbol) [0x7ff73db5401c]
+	chromedriver!(No symbol) [0x7ff73db54f43]
+	chromedriver!GetHandleVerifier [0x7ff73e5a7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff73e5a1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff73e5c7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff73dfe1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff73dfea82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff73dfcd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff73dfcd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff73dfb1447+1dc7]
+	KERNEL32!BaseThreadInitThunk [0x7ffa45fb7374+14]
+	ntdll!RtlUserThreadStart [0x7ffa470fcc91+21]

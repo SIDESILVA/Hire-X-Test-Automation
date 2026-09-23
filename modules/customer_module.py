@@ -422,7 +422,7 @@ class CustomerModule:
                 EC.visibility_of_element_located(self.page.MODAL_CONTAINER)
             )
 
-            time.sleep(2)  # 🔥 important for Angular render
+            time.sleep(2) 
 
             # ================= TASK TYPE =================
             type_dropdown = self.wait.until(
@@ -553,7 +553,7 @@ class CustomerModule:
 
             select.select_by_value(value)
 
-            # 🔥 IMPORTANT: trigger Angular change event manually
+            # trigger Angular change event manually
             self.driver.execute_script(
                 "arguments[0].dispatchEvent(new Event('change'))",
                 template_dropdown
@@ -587,10 +587,10 @@ class CustomerModule:
 
                 self.driver.execute_script("arguments[0].click();", attach_btn)
 
-                print("📎 Add Attachment clicked")
+                print(" Add Attachment clicked")
 
             except Exception:
-                print("⚠️ Attachment button not required")
+                print(" Attachment button not required")
 
             # file input
             file_input = self.wait.until(
@@ -599,7 +599,6 @@ class CustomerModule:
 
             file_path = self.get_random_image_path()
 
-            # 🔥 CRITICAL FIX 1: ensure visible
             self.driver.execute_script(
                 "arguments[0].style.display='block';",
                 file_input
@@ -608,13 +607,11 @@ class CustomerModule:
             # send file
             file_input.send_keys(file_path)
 
-            # 🔥 CRITICAL FIX 2: force Angular change detection
             self.driver.execute_script("""
                 arguments[0].dispatchEvent(new Event('input', { bubbles: true }));
                 arguments[0].dispatchEvent(new Event('change', { bubbles: true }));
             """, file_input)
 
-            # 🔥 CRITICAL FIX 3: wait UI update
             time.sleep(2)
 
             print(f"✅ File uploaded: {file_path}")
@@ -774,7 +771,7 @@ class CustomerModule:
         self.delete_phone_number()
 
         # ==================================================
-        # TASK FLOW (UPDATED)
+        # TASK FLOW 
         # ==================================================
 
         self.click_new_task_button()

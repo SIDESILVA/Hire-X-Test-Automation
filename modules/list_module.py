@@ -317,7 +317,7 @@ class ListModule:
                 )
 
         # ==================================================
-        # STEP 1: CLICK NEW
+        # CLICK NEW
         # ==================================================
         with allure.step("Click NEW Button"):
 
@@ -338,7 +338,7 @@ class ListModule:
             slow_down()
 
         # ==================================================
-        # STEP 2: CREATE NEW LIST
+        # CREATE NEW LIST
         # ==================================================
         with allure.step("Create New List in Modal"):
 
@@ -378,7 +378,7 @@ class ListModule:
             slow_down(2)
 
         # ==================================================
-        # STEP 3: CLICK ZERO MEMBER ROW
+        # CLICK ZERO MEMBER ROW
         # ==================================================
         with allure.step("Open ONLY list where Members = 0"):
 
@@ -410,7 +410,7 @@ class ListModule:
             )
 
         # ==================================================
-        # STEP 4: CLICK DELETE BUTTON
+        # CLICK DELETE BUTTON
         # ==================================================
         with allure.step("Click Delete Button"):
 
@@ -442,7 +442,7 @@ class ListModule:
             )
 
         # ==================================================
-        # STEP 5: CLICK YES BUTTON IN POPUP
+        # CLICK YES BUTTON IN POPUP
         # ==================================================
         with allure.step("Click YES Button in Delete Popup"):
 

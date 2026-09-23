@@ -41,7 +41,7 @@ class TenantPage:
         ).click()
 
     def click_sign_in(self):
-        # ✅ IMPORTANT FIX ADDED HERE
+        
         self.wait_for_loader_to_disappear()
 
         self.wait.until(
