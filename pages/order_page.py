@@ -812,3 +812,26 @@ class OrderPage:
         "//form[@name='orderCancelForm']"
         "//button[@type='submit' and normalize-space()='Save and cancel this order']"
     )
+
+    # ---------------- Delete Cancelled Order ----------------
+
+    DELETE_CANCELLED_ORDER_OPTION = (
+        By.XPATH,
+        "//div[contains(@class,'card')]"
+        "[.//h5[normalize-space()='Hire Details']]"
+        "//ul[contains(@class,'dropdown-menu')]"
+        "//a[normalize-space()='Delete']"
+    )
+
+    DELETE_CONFIRMATION_MODAL = (
+        By.XPATH,
+        "//modal-container[@role='dialog']"
+        "//div[contains(@class,'alert-box')]"
+    )
+
+    DELETE_CONFIRM_YES_BUTTON = (
+        By.XPATH,
+        "//modal-container[@role='dialog']"
+        "//div[contains(@class,'alert-box')]"
+        "//button[normalize-space()='Yes']"
+    )

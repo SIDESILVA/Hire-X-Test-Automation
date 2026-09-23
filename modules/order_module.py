@@ -5941,7 +5941,10 @@ class OrderModule:
                 "Looking for Cancellation Reason dropdown..."
             )
 
-            reason_dropdown = WebDriverWait(self.driver, 40).until(
+            reason_dropdown = WebDriverWait(
+                self.driver,
+                40
+            ).until(
                 EC.visibility_of_element_located(
                     OrderPage.CANCELLATION_REASON_DROPDOWN
                 )
@@ -6012,6 +6015,11 @@ class OrderModule:
                 "✅ Save and cancel this order button found"
             )
 
+            self.driver.execute_script(
+                "arguments[0].scrollIntoView({block:'center'});",
+                save_cancel_button
+            )
+
             WebDriverWait(self.driver, 20).until(
                 lambda d: save_cancel_button.is_enabled()
             )
@@ -6020,18 +6028,15 @@ class OrderModule:
                 "✅ Save and cancel this order button is enabled"
             )
 
-            self.driver.execute_script(
-                "arguments[0].scrollIntoView({block:'center'});",
-                save_cancel_button
-            )
-
             try:
                 save_cancel_button.click()
+
                 print(
                     "✅ Save and cancel this order button clicked"
                 )
 
             except Exception as e:
+
                 print(
                     f"Normal Save and cancel button click failed: "
                     f"{type(e).__name__}"
@@ -6046,21 +6051,301 @@ class OrderModule:
                     "✅ Save and cancel button clicked using JavaScript"
                 )
 
-            print("Waiting for cancellation popup to close...")
+            # -----------------------------------------------------
+            # DO NOT WAIT FOR THE MODAL TO BECOME INVISIBLE
+            # Wait for the actual order status to become Cancelled.
+            # -----------------------------------------------------
 
-            WebDriverWait(self.driver, 40).until(
-                EC.invisibility_of_element_located(
-                    OrderPage.CANCELLATION_MODAL
+            print(
+                "Waiting for order status to change to Cancelled..."
+            )
+
+            WebDriverWait(
+                self.driver,
+                60
+            ).until(
+                EC.text_to_be_present_in_element(
+                    OrderPage.ON_HIRE_STATUS_DROPDOWN,
+                    "Cancelled"
                 )
             )
 
             print(
-                "✅ Cancellation popup closed successfully"
+                "✅ Order status changed to Cancelled successfully"
+            )
+
+            # Wait for any page spinner to finish.
+            print(
+                "Waiting for page loading to complete..."
+            )
+
+            WebDriverWait(
+                self.driver,
+                40
+            ).until(
+                EC.invisibility_of_element_located(
+                    OrderPage.SPINNER
+                )
             )
 
             print(
-                "✅ Order cancelled successfully"
+                "✅ Page spinner disappeared"
             )
+
+            slow_down()
+            
+    # ---------------- DELETE CANCELLED ORDER ----------------
+    def delete_cancelled_order(self):
+        with allure.step("Delete cancelled order"):
+
+            print("Looking for Cancelled status dropdown...")
+
+            status_dropdown = WebDriverWait(
+                self.driver,
+                40
+            ).until(
+                EC.element_to_be_clickable(
+                    OrderPage.ON_HIRE_STATUS_DROPDOWN
+                )
+            )
+
+            print("✅ Cancelled status dropdown found")
+
+            self.driver.execute_script(
+                "arguments[0].scrollIntoView({block:'center'});",
+                status_dropdown
+            )
+
+            try:
+                status_dropdown.click()
+                print("✅ Cancelled status dropdown clicked")
+
+            except Exception as e:
+
+                print(
+                    f"Normal status dropdown click failed: "
+                    f"{type(e).__name__}"
+                )
+
+                self.driver.execute_script(
+                    "arguments[0].click();",
+                    status_dropdown
+                )
+
+                print(
+                    "✅ Cancelled status dropdown clicked "
+                    "using JavaScript"
+                )
+
+            print("Waiting for page loading to complete...")
+
+            WebDriverWait(
+                self.driver,
+                40
+            ).until(
+                EC.invisibility_of_element_located(
+                    OrderPage.SPINNER
+                )
+            )
+
+            print("✅ Page spinner disappeared")
+
+            print("Looking for Delete option...")
+
+            delete_option = WebDriverWait(
+                self.driver,
+                20
+            ).until(
+                EC.visibility_of_element_located(
+                    OrderPage.DELETE_CANCELLED_ORDER_OPTION
+                )
+            )
+
+            print("✅ Delete option found")
+
+            self.driver.execute_script(
+                "arguments[0].scrollIntoView({block:'center'});",
+                delete_option
+            )
+
+            WebDriverWait(
+                self.driver,
+                20
+            ).until(
+                lambda d: (
+                    delete_option.is_displayed()
+                    and delete_option.is_enabled()
+                )
+            )
+
+            try:
+                delete_option.click()
+                print("✅ Delete option clicked")
+
+            except Exception as e:
+
+                print(
+                    f"Normal Delete click failed: "
+                    f"{type(e).__name__}"
+                )
+
+                WebDriverWait(
+                    self.driver,
+                    20
+                ).until(
+                    EC.invisibility_of_element_located(
+                        OrderPage.SPINNER
+                    )
+                )
+
+                self.driver.execute_script(
+                    "arguments[0].click();",
+                    delete_option
+                )
+
+                print(
+                    "✅ Delete option clicked "
+                    "using JavaScript"
+                )
+
+            print("Waiting for delete confirmation popup...")
+
+            yes_button = WebDriverWait(
+                self.driver,
+                20
+            ).until(
+                EC.element_to_be_clickable(
+                    OrderPage.DELETE_CONFIRM_YES_BUTTON
+                )
+            )
+
+            print(
+                "✅ Delete confirmation popup opened successfully"
+            )
+
+            print("Looking for Yes button...")
+
+            print("✅ Yes button found")
+
+            self.driver.execute_script(
+                "arguments[0].scrollIntoView({block:'center'});",
+                yes_button
+            )
+
+            try:
+                yes_button.click()
+                print("✅ Yes button clicked")
+
+            except Exception as e:
+
+                print(
+                    f"Normal Yes button click failed: "
+                    f"{type(e).__name__}"
+                )
+
+                self.driver.execute_script(
+                    "arguments[0].click();",
+                    yes_button
+                )
+
+                print(
+                    "✅ Yes button clicked "
+                    "using JavaScript"
+                )
+
+            # -----------------------------------------------------
+            # IMPORTANT:
+            # Do NOT wait for DELETE_CONFIRMATION_MODAL to become
+            # invisible. The application re-renders the modal/page
+            # after deletion and that locator can remain present.
+            # -----------------------------------------------------
+
+            print(
+                "Waiting for order deletion to complete..."
+            )
+
+            # First wait for any loading spinner to finish.
+            try:
+
+                WebDriverWait(
+                    self.driver,
+                    60
+                ).until(
+                    EC.invisibility_of_element_located(
+                        OrderPage.SPINNER
+                    )
+                )
+
+                print(
+                    "✅ Page spinner disappeared"
+                )
+
+            except Exception:
+
+                print(
+                    "ℹ️ Spinner did not disappear within "
+                    "the expected time."
+                )
+
+            # -----------------------------------------------------
+            # Wait for the Delete option to disappear.
+            # This confirms that the cancelled order page/status
+            # is no longer available in the current UI.
+            # -----------------------------------------------------
+
+            print(
+                "Verifying that the cancelled order was deleted..."
+            )
+
+            try:
+
+                WebDriverWait(
+                    self.driver,
+                    30
+                ).until(
+                    EC.invisibility_of_element_located(
+                        OrderPage.DELETE_CANCELLED_ORDER_OPTION
+                    )
+                )
+
+                print(
+                    "✅ Delete option disappeared"
+                )
+
+                print(
+                    "✅ Cancelled order deleted successfully"
+                )
+
+            except Exception:
+
+                # The application may redirect to another page
+                # after deletion. Check the current URL.
+
+                current_url = self.driver.current_url
+
+                print(
+                    f"ℹ️ Current URL after delete: "
+                    f"{current_url}"
+                )
+
+                if "/supplier/orders" in current_url:
+                    print(
+                        "✅ Redirected to Orders page"
+                    )
+
+                    print(
+                        "✅ Cancelled order deleted successfully"
+                    )
+
+                else:
+
+                    raise Exception(
+                        "Order deletion could not be verified. "
+                        "The Yes button was clicked, but the "
+                        "Delete option is still present and the "
+                        "application did not redirect to the "
+                        "Orders page."
+                    )
 
             slow_down()
     

@@ -427,6 +427,13 @@ def test_create_order(driver, login):
         order.fill_cancellation_reason_and_cancel()
 
     # =========================================================
+    # DELETE CANCELLED ORDER
+    # =========================================================
+
+    with allure.step("Delete cancelled order"):
+        order.delete_cancelled_order()
+
+    # =========================================================
     # FINAL VALIDATION
     # =========================================================
 
